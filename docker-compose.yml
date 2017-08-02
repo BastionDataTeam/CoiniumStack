@@ -6,8 +6,7 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - /mnt/ShareOne/Docker/Projects/1:/bitnami
-      - /mnt/ShareOne/Docker/Projects/1/db:/usr/local/mysql
+      - /mnt/ShareOne/Docker/Projects/1/bitnami:/bitnami
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_USER=my_user
@@ -19,17 +18,20 @@ services:
     ports:
       - '6379:6379'
     volumes:
-      - /mnt/ShareOne/Docker/Projects/1:/var/lib/redis
+      - /mnt/ShareOne/Docker/Projects/1/redis:/var/lib/redis
     depends_on:
       - mysql
       
   mpool:
-    build: ./mpool
+    image: 'bastiondata/docker_coinium:latest'
     depends_on:
       - redis
       - mysql
+    volumes:
+      - /mnt/ShareOne/Docker/Projects/1/config:/usr/local/bin/CoiniumServ/build/release/config
     ports:
       - 8081:80
+      - 3333:3333
     links:
       - "mysql:dbname"
       - "redis"
